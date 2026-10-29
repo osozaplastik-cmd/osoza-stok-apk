@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Osoza Stok</title>
+<meta name="theme-color" content="#202735">
+<meta name="application-name" content="Osoza Stok">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Osoza Stok">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+:root{--bg:#f3f5f8;--panel:#fff;--ink:#172033;--muted:#687386;--line:#e2e7ef;--orange:#f28c28;--dark:#202735;--green:#16845b;--red:#c23b42;--blue:#315fbd;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);padding-bottom:calc(76px + var(--sab));overscroll-behavior-y:none}
+header{background:var(--dark);color:#fff;padding:calc(14px + var(--sat)) 16px 14px;border-bottom:4px solid var(--orange);position:sticky;top:0;z-index:20}
+header h1{margin:0;font-size:19px;letter-spacing:.3px}
+header p{margin:3px 0 0;color:#d5dbe5;font-size:12px}
+main{max-width:720px;margin:0 auto;padding:14px 14px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 10px;box-shadow:0 2px 8px #1b273510}
+.stat span{font-size:11px;color:var(--muted);display:block;line-height:1.2}
+.stat strong{display:block;font-size:21px;margin-top:5px;overflow-wrap:anywhere}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 3px 12px #1b273510;margin-bottom:14px}
+.panel h2{font-size:17px;margin:0 0 14px}
+.tab{display:none}.tab.active{display:block}
+label{display:block;font-size:13px;font-weight:700;color:#4c5668;margin-bottom:6px}
+input,select{width:100%;padding:12px;min-height:48px;border:1px solid #cfd6e1;border-radius:10px;background:#fff;color:var(--ink);font:inherit;font-size:16px;min-width:0;-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,#687386 50%),linear-gradient(135deg,#687386 50%,transparent 50%);background-position:calc(100% - 20px) 21px,calc(100% - 14px) 21px;background-size:6px 6px;background-repeat:no-repeat;padding-right:34px}
+input:focus,select:focus{outline:2px solid var(--orange);outline-offset:0;border-color:var(--orange)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.field{margin-bottom:12px}.row .field{margin-bottom:0}
+button{border:0;border-radius:10px;padding:12px 14px;min-height:48px;font-weight:700;cursor:pointer;font-size:15px;font-family:inherit}
+button:active{transform:scale(.98);opacity:.9}
+.primary{background:var(--orange);color:#21170e}.secondary{background:#e9edf4;color:#263247}
+.block{width:100%}
+.actions{display:flex;gap:8px;margin-top:6px}.actions>*{flex:1}
+.stack{display:grid;gap:8px}
+.small{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.45}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.seg button{background:#e9edf4;color:#263247;min-height:46px;padding:8px 4px;font-size:14px}
+.seg button.on[data-v=in]{background:var(--green);color:#fff}
+.seg button.on[data-v=out]{background:var(--red);color:#fff}
+.seg button.on[data-v=adjust]{background:var(--blue);color:#fff}
+.filters{display:grid;gap:8px;margin-bottom:12px}
+.filters .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.list{display:grid;gap:10px}
+.card{background:#fff;border:1px solid var(--line);border-left:6px solid var(--c,#f28c28);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.card .nm{font-weight:700;font-size:15px;overflow-wrap:anywhere}
+.card .sub{font-size:12px;color:var(--muted);margin-top:3px}
+.card .qt{font-size:22px;font-weight:800;color:var(--green);text-align:right;white-space:nowrap}
+.card .qt.zero{color:var(--red)}
+.card .qt small{display:block;font-size:12px;font-weight:600;color:var(--muted)}
+.card.h{display:block}
+.h .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.h .mid{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:13px}
+.h .note{margin-top:6px;font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.h .del{margin-top:8px;min-height:38px;padding:6px 12px;font-size:13px}
+.pill{display:inline-block;padding:4px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.in{background:#e1f5eb;color:#126d4a}.out{background:#fde8e8;color:#a72d35}.adjust{background:#e8efff;color:#254f9f}
+.empty{text-align:center;padding:26px 10px;color:var(--muted);font-size:14px}
+nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:6px 6px calc(6px + var(--sab));z-index:30;box-shadow:0 -4px 16px #1b273514}
+nav button{background:none;color:var(--muted);min-height:54px;padding:4px 2px;font-size:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:12px}
+nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--orange);background:#fff4e7}
+.toast{position:fixed;left:50%;bottom:calc(90px + var(--sab));transform:translateX(-50%) translateY(20px);background:#172033;color:#fff;padding:12px 18px;border-radius:24px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--red)}
+.install{display:none;background:#fff4e7;border:1px solid #f7d3a8;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px}
+.install.show{display:block}.install button{margin-top:8px;min-height:42px}
+@media(min-width:760px){main{padding-top:22px}}
+@media print{body{background:#fff;padding:0}header{position:static;background:#fff;color:#000;border-bottom:2px solid #000}header p{color:#333}nav,.no-print,button,.filters,.install,.toast{display:none!important}.tab{display:block!important}.card{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header><h1>OSOZA PLASTİK · STOK TAKİP</h1><p>Stok kaydı, tarihli işlem geçmişi ve arşiv</p></header>
+<main>
+  <div class="install no-print" id="installBox"><strong>Uygulamayı telefona kur</strong><div id="installText">Ana ekranınıza ekleyerek uygulama gibi kullanın.</div><button class="primary" id="installBtn">Ana ekrana ekle</button></div>
+
+  <div class="grid">
+    <div class="stat"><span>Ürün çeşidi</span><strong id="productCount">0</strong></div>
+    <div class="stat"><span>Toplam stok (karışık)</span><strong id="totalStock">0</strong></div>
+    <div class="stat"><span>Bugünkü hareket</span><strong id="todayMoves">0</strong></div>
+  </div>
+
+  <section class="panel tab active no-print" id="tab-move">
+    <h2>Stok hareketi ekle</h2>
+    <div class="seg" id="typeSeg">
+      <button data-v="in" class="on">Giriş (+)</button><button data-v="out">Çıkış (−)</button><button data-v="adjust">Düzeltme (=)</button>
+    </div>
+    <div class="field"><label for="product">Ürün adı</label><input id="product" list="productList" placeholder="Örn. Takı çantası, altın kutusu..." autocomplete="off" autocapitalize="sentences"><datalist id="productList"></datalist></div>
+    <div class="row">
+      <div class="field"><label for="qty">Miktar</label><input id="qty" type="number" inputmode="numeric" min="1" step="1" placeholder="0"></div>
+      <div class="field"><label for="unit">Birim</label><select id="unit"><option value="adet">Adet</option><option value="paket">Paket</option></select></div>
+    </div>
+    <div class="field"><label for="date">İşlem tarihi</label><input id="date" type="date"></div>
+    <div class="field"><label for="note">Açıklama (isteğe bağlı)</label><input id="note" placeholder="Örn. üretim, sevkiyat, sayım düzeltmesi"></div>
+    <div class="actions"><button class="primary" id="saveBtn">İşlemi kaydet</button><button class="secondary" id="clearBtn">Temizle</button></div>
+    <p class="small">Aynı ürünün birimi stok varken değiştirilemez. Çıkışta mevcut stoktan fazla miktar girilirse kayıt yapılmaz. “Düzeltme”de yazdığınız miktar ürünün yeni toplam stoğu olur.</p>
+  </section>
+
+  <section class="tab" id="tab-stock">
+    <div class="panel">
+      <h2>Mevcut stoklar</h2>
+      <div class="filters no-print"><input id="stockSearch" type="search" placeholder="Ürün ara..."><select id="stockSort"><option value="name">Ürün adına göre</option><option value="high">Stok: çoktan aza</option><option value="low">Stok: azdan çoğa</option></select></div>
+      <div class="list" id="stockRows"></div>
+      <div class="stack no-print" style="margin-top:14px"><button class="secondary" id="csvBtn">Stokları CSV olarak kaydet / paylaş</button><button class="secondary" id="printBtn">Yazdır / PDF</button></div>
+    </div>
+  </section>
+
+  <section class="tab" id="tab-history">
+    <div class="panel">
+      <h2>İşlem geçmişi ve arşiv</h2>
+      <div class="filters no-print"><input id="historySearch" type="search" placeholder="Ürün veya açıklama ara..."><div class="two"><input id="fromDate" type="date" aria-label="Başlangıç tarihi"><input id="toDate" type="date" aria-label="Bitiş tarihi"></div><button class="secondary" id="resetFilters">Filtreleri sıfırla</button></div>
+      <div class="list" id="historyRows"></div>
+    </div>
+  </section>
+
+  <section class="tab no-print" id="tab-report">
+    <div class="panel">
+      <h2>Gün sonu raporu</h2>
+      <p class="small" style="margin-top:0">Mevcut stokları renkli kutularla ve işlem geçmişini uzun tek sayfalık görsel olarak JPEG kaydeder. Telefonda paylaşma menüsü açılır; “Görüntüleri Kaydet” / Galeri’yi seçebilirsiniz.</p>
+      <button class="primary block" id="dayEndBtn">GÜNSONU · JPEG RAPORLARINI OLUŞTUR</button>
+    </div>
+    <div class="panel">
+      <h2>Yedekleme</h2>
+      <div class="stack"><button class="secondary" id="historyCsvBtn">Arşivi CSV olarak kaydet / paylaş</button><button class="secondary" id="backupBtn">Yedek dosyası kaydet / paylaş</button><button class="secondary" id="restoreBtn">Yedekten geri yükle</button><input id="restoreFile" type="file" accept=".json,application/json" hidden></div>
+      <p class="small">Veriler bu telefonun / tarayıcının içinde tutulur. Telefonu değiştirmeden veya uygulamayı silmeden önce mutlaka yedek alın ve yedeği Drive, WhatsApp veya e-posta ile kendinize gönderin.</p>
+    </div>
+  </section>
+</main>
+
+<nav class="no-print" id="nav">
+  <button data-tab="move" class="on"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Hareket</button>
+  <button data-tab="stock"><svg viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/></svg>Stok</button>
+  <button data-tab="history"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Geçmiş</button>
+  <button data-tab="report"><svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9l-6-6zM14 3v6h6M8 13h8M8 17h5"/></svg>Rapor</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const KEY = 'osoza_stok_takip_v1';
+  const $ = id => document.getElementById(id);
+  let data = {products:{}, history:[]};
+  let moveType = 'in';
+  const today = () => new Date().toLocaleDateString('en-CA');
+  const fmt = d => d ? new Date(d+'T12:00:00').toLocaleDateString('tr-TR') : '—';
+  const num = n => Number(n||0).toLocaleString('tr-TR');
+  const PALETTE=['#f28c28','#315fbd','#16845b','#b4458e','#c23b42','#0f8b8d','#8a63c7','#b7791f','#4776a8','#64748b','#d05b35','#4f772d'];
+
+  let toastTimer;
+  function toast(msg,err){const t=$('toast');t.textContent=msg;t.className='toast show'+(err?' err':'');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.className='toast',2600);}
+  function load(){try{const saved=localStorage.getItem(KEY);if(saved){const p=JSON.parse(saved);if(p&&p.products&&Array.isArray(p.history))data=p;}}catch(e){alert('Kayıtlar okunamadı. Yedek dosyanız varsa geri yükleyebilirsiniz.');}}
+  function persist(){try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){alert('Kayıt yapılamadı: depolama dolu veya kapalı olabilir.');}render();}
+  function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+  function render(){
+    const names=Object.keys(data.products);
+    $('productCount').textContent=num(names.length);
+    $('totalStock').textContent=num(names.reduce((s,n)=>s+data.products[n].stock,0));
+    $('todayMoves').textContent=num(data.history.filter(h=>h.date===today()).length);
+    const sorted=names.slice().sort((a,b)=>a.localeCompare(b,'tr'));
+    $('productList').innerHTML=sorted.map(n=>`<option value="${escapeHtml(n)}">`).join('');
+    const colorOf=n=>PALETTE[sorted.indexOf(n)%PALETTE.length];
+    const q=$('stockSearch').value.trim().toLocaleLowerCase('tr');
+    let stock=names.map(name=>({name,...data.products[name]})).filter(p=>p.name.toLocaleLowerCase('tr').includes(q));
+    const sort=$('stockSort').value;
+    stock.sort((a,b)=>sort==='high'?b.stock-a.stock:sort==='low'?a.stock-b.stock:a.name.localeCompare(b.name,'tr'));
+    $('stockRows').innerHTML=stock.length?stock.map(p=>`<div class="card" style="--c:${colorOf(p.name)}"><div><div class="nm">${escapeHtml(p.name)}</div><div class="sub">Son işlem: ${fmt(p.lastDate)}</div></div><div class="qt ${p.stock<=0?'zero':''}">${num(p.stock)}<small>${escapeHtml(p.unit||'adet')}</small></div></div>`).join(''):'<div class="empty">Henüz ürün yok. “Hareket” sekmesinden ilk stok girişini yapabilirsiniz.</div>';
+    const hq=$('historySearch').value.trim().toLocaleLowerCase('tr'),from=$('fromDate').value,to=$('toDate').value;
+    const history=data.history.filter(h=>(!hq||(h.product+' '+(h.note||'')).toLocaleLowerCase('tr').includes(hq))&&(!from||h.date>=from)&&(!to||h.date<=to)).slice().sort((a,b)=>(b.date+b.id).localeCompare(a.date+a.id));
+    $('historyRows').innerHTML=history.length?history.map(h=>{
+      const label=h.type==='in'?'Giriş':h.type==='out'?'Çıkış':'Düzeltme';
+      const pill=h.type==='in'?'in':h.type==='out'?'out':'adjust';
+      const amount=h.type==='in'?'+'+num(h.qty):h.type==='out'?'−'+num(h.qty):'='+num(h.qty);
+      const unit=escapeHtml(h.unit||'adet');
+      return `<div class="card h" style="--c:${h.type==='in'?'#16845b':h.type==='out'?'#c23b42':'#315fbd'}"><div class="top"><div class="nm">${escapeHtml(h.product)}</div><span class="pill ${pill}">${label}</span></div><div class="mid"><span>${fmt(h.date)}</span><span><strong>${amount} ${unit}</strong> → ${num(h.after)} ${unit}</span></div>${h.note?`<div class="note">${escapeHtml(h.note)}</div>`:''}<button class="secondary del no-print" data-delete="${h.id}">Kaydı sil</button></div>`;
+    }).join(''):'<div class="empty">Kayıt bulunamadı.</div>';
+  }
+
+  function setType(v){moveType=v;document.querySelectorAll('#typeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
+  function resetForm(){$('product').value='';$('qty').value='';$('note').value='';$('unit').value='adet';$('date').value=today();setType('in');}
+
+  function saveMove(){
+    const product=$('product').value.trim(),type=moveType,qty=Number($('qty').value),date=$('date').value,note=$('note').value.trim(),unit=$('unit').value;
+    if(!product){toast('Lütfen ürün adını yazın.',1);$('product').focus();return;}
+    if(!Number.isInteger(qty)||qty<1){toast('Miktar en az 1 ve tam sayı olmalı.',1);$('qty').focus();return;}
+    if(!date){toast('Lütfen işlem tarihini seçin.',1);return;}
+    const existing=data.products[product]?.stock||0;
+    const oldUnit=data.products[product]?.unit||'adet';
+    if(data.products[product]&&oldUnit!==unit&&existing>0){alert(`Bu ürünün mevcut birimi ${oldUnit}. Aynı ürün için birimi değiştirmek stok hesabını karıştırabilir. Lütfen mevcut birimi koruyun veya farklı isimle ayrı ürün açın.`);$('unit').value=oldUnit;return;}
+    let after;
+    if(type==='in')after=existing+qty;
+    else if(type==='out'){if(qty>existing){alert(`Yetersiz stok! Mevcut stok: ${num(existing)} ${oldUnit}.`);return;}after=existing-qty;}
+    else after=qty;
+    data.products[product]={stock:after,lastDate:date,unit};
+    data.history.push({id:String(Date.now())+Math.random().toString(16).slice(2,6),date,product,type,qty,note,after,unit,createdAt:new Date().toISOString()});
+    persist();resetForm();
+    if(navigator.vibrate)navigator.vibrate(30);
+    toast('Kaydedildi: '+product+' → '+num(after)+' '+unit);
+  }
+
+  // Dosya teslimi: telefonda paylaşma menüsü, olmazsa indirme
+  const isNative=!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
+  const toBase64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]);r.onerror=()=>rej(r.error);r.readAsDataURL(f);});
+  async function deliverNative(files){
+    const P=window.Capacitor.Plugins,uris=[];
+    for(const f of files){const w=await P.Filesystem.writeFile({path:f.name,data:await toBase64(f),directory:'CACHE'});uris.push(w.uri);}
+    try{await P.Share.share({title:files[0].name,files:uris,dialogTitle:'Kaydet / Paylaş'});}
+    catch(e){if(/cancel/i.test(String(e&&(e.message||e))))return 'cancel';throw e;}
+    return 'share';
+  }
+  async function deliver(files){
+    if(isNative)return deliverNative(files);
+    try{
+      if(navigator.canShare&&navigator.canShare({files})){await navigator.share({files,title:files[0].name});return 'share';}
+    }catch(e){if(e&&e.name==='AbortError')return 'cancel';}
+    files.forEach((f,i)=>setTimeout(()=>{const url=URL.createObjectURL(f),a=document.createElement('a');a.href=url;a.download=f.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);},i*400));
+    return 'download';
+  }
+  const textFile=(name,content,type)=>new File([content],name,{type});
+  function csvCell(v){return '"'+String(v??'').replace(/"/g,'""')+'"';}
+  const csvText=rows=>'﻿'+rows.map(r=>r.map(csvCell).join(';')).join('\r\n');
+  async function stockCsv(){const rows=[['Ürün adı','Mevcut stok','Birim','Son işlem tarihi'],...Object.keys(data.products).sort((a,b)=>a.localeCompare(b,'tr')).map(n=>[n,data.products[n].stock,data.products[n].unit||'adet',data.products[n].lastDate||''])];await deliver([textFile('osoza-stoklar-'+today()+'.csv',csvText(rows),'text/csv')]);}
+  async function historyCsv(){const rows=[['Tarih','Ürün','İşlem','Miktar','Birim','İşlem sonrası stok','Açıklama'],...data.history.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(h=>[h.date,h.product,h.type==='in'?'Giriş':h.type==='out'?'Çıkış':'Düzeltme',h.qty,h.unit||'adet',h.after,h.note||''])];await deliver([textFile('osoza-stok-arsiv-'+today()+'.csv',csvText(rows),'text/csv')]);}
+  async function backup(){await deliver([textFile('osoza-stok-yedek-'+today()+'.json',JSON.stringify(data,null,2),'application/json')]);try{localStorage.setItem(KEY+'_lastBackup',today());}catch(e){}}
+
+  // Sekmeler
+  function showTab(t){document.querySelectorAll('.tab').forEach(s=>s.classList.toggle('active',s.id==='tab-'+t));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));window.scrollTo({top:0});}
+  $('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(b)showTab(b.dataset.tab);});
+  $('typeSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setType(b.dataset.v);});
+
+  $('saveBtn').addEventListener('click',saveMove);
+  $('clearBtn').addEventListener('click',resetForm);
+  $('product').addEventListener('change',()=>{const p=data.products[$('product').value.trim()];if(p)$('unit').value=p.unit||'adet';});
+  ['stockSearch','stockSort','historySearch','fromDate','toDate'].forEach(id=>$(id).addEventListener('input',render));
+  $('resetFilters').addEventListener('click',()=>{['historySearch','fromDate','toDate'].forEach(id=>$(id).value='');render();});
+  $('printBtn').addEventListener('click',()=>window.print());
+  $('csvBtn').addEventListener('click',stockCsv);
+  $('historyCsvBtn').addEventListener('click',historyCsv);
+  $('backupBtn').addEventListener('click',backup);
+  $('restoreBtn').addEventListener('click',()=>$('restoreFile').click());
+  $('restoreFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const parsed=JSON.parse(await file.text());if(!parsed.products||!Array.isArray(parsed.history))throw new Error('format');if(!confirm('Mevcut kayıtlar yedek dosyasındaki kayıtlarla değiştirilsin mi? Önce mevcut kayıtlarınızın yedeğini almanız önerilir.'))return;data=parsed;persist();toast('Yedek geri yüklendi.');}catch(err){alert('Dosya okunamadı veya geçerli bir Osoza stok yedeği değil.');}finally{e.target.value='';}});
+  $('historyRows').addEventListener('click',e=>{const btn=e.target.closest('[data-delete]');if(!btn)return;const id=btn.dataset.delete;const h=data.history.find(x=>x.id===id);if(!h)return;if(!confirm('Bu arşiv kaydı silinsin mi? Stok miktarı otomatik değiştirilmez.'))return;data.history=data.history.filter(x=>x.id!==id);persist();toast('Kayıt silindi.');});
+
+  // JPEG raporları
+  function canvasText(ctx,text,x,y,maxWidth,lineHeight,maxLines=3){
+    const words=String(text??'').split(/\s+/);let line='',lines=[];
+    for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word;}else line=test;}
+    if(line)lines.push(line);if(lines.length>maxLines){lines=lines.slice(0,maxLines);let last=lines[maxLines-1];while(ctx.measureText(last+'…').width>maxWidth&&last.length)last=last.slice(0,-1);lines[maxLines-1]=last+'…';}
+    lines.forEach((t,i)=>ctx.fillText(t,x,y+i*lineHeight));return lines.length*lineHeight;
+  }
+  function makeStockJpeg(){
+    const items=Object.keys(data.products).map(name=>({name,...data.products[name]})).sort((a,b)=>a.name.localeCompare(b.name,'tr'));
+    const W=1600,pad=48,gap=18,cols=5,cardW=(W-pad*2-gap*(cols-1))/cols,cardH=142,rows=Math.max(1,Math.ceil(items.length/cols));
+    const H=230+rows*(cardH+gap)+70,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+    x.fillStyle='#f4f6f9';x.fillRect(0,0,W,H);x.fillStyle='#202735';x.fillRect(0,0,W,145);x.fillStyle='#f28c28';x.fillRect(0,145,W,7);
+    x.fillStyle='#fff';x.font='bold 40px Arial';x.fillText('OSOZA PLASTİK · GÜN SONU STOK RAPORU',pad,62);x.font='24px Arial';x.fillText('Tarih: '+new Date().toLocaleDateString('tr-TR'),pad,108);
+    x.fillStyle='#172033';x.font='bold 24px Arial';x.fillText('Ürün çeşidi: '+items.length+'     Toplam stok: '+num(items.reduce((a,b)=>a+b.stock,0))+' (adet + paket)',pad,196);
+    if(!items.length){x.fillStyle='#687386';x.font='28px Arial';x.fillText('Henüz ürün kaydı bulunmuyor.',pad,270);}
+    items.forEach((it,i)=>{const col=i%cols,row=Math.floor(i/cols),cx=pad+col*(cardW+gap),cy=230+row*(cardH+gap),color=PALETTE[i%PALETTE.length],unit=it.unit||'adet';x.fillStyle='#fff';x.fillRect(cx,cy,cardW,cardH);x.strokeStyle=color;x.lineWidth=5;x.strokeRect(cx+2,cy+2,cardW-4,cardH-4);x.fillStyle=color;x.fillRect(cx,cy,10,cardH);x.fillStyle='#172033';x.font='bold 21px Arial';canvasText(x,it.name,cx+22,cy+34,cardW-42,25,2);x.fillStyle=it.stock<=0?'#c23b42':'#16845b';x.font='bold 30px Arial';x.fillText(num(it.stock)+' '+unit,cx+22,cy+98);x.fillStyle='#687386';x.font='16px Arial';x.fillText('Son işlem: '+fmt(it.lastDate),cx+22,cy+125);});
+    x.fillStyle='#687386';x.font='16px Arial';x.fillText('Osoza Plastik · Oluşturulma: '+new Date().toLocaleString('tr-TR'),pad,H-28);
+    return c;
+  }
+  function makeHistoryJpeg(){
+    const items=data.history.slice().sort((a,b)=>(a.date+a.id).localeCompare(b.date+b.id));
+    const W=1800,pad=48,rowH=54,headH=150,H=headH+Math.max(1,items.length)*rowH+70,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+    x.fillStyle='#fff';x.fillRect(0,0,W,H);x.fillStyle='#202735';x.fillRect(0,0,W,112);x.fillStyle='#f28c28';x.fillRect(0,112,W,7);x.fillStyle='#fff';x.font='bold 36px Arial';x.fillText('OSOZA PLASTİK · İŞLEM GEÇMİŞİ / ARŞİV',pad,48);x.font='21px Arial';x.fillText('Rapor tarihi: '+new Date().toLocaleDateString('tr-TR')+'   |   Toplam kayıt: '+items.length,pad,84);
+    const cols=[{t:'TARİH',x:pad,w:150},{t:'ÜRÜN',x:pad+150,w:360},{t:'İŞLEM',x:pad+510,w:150},{t:'MİKTAR',x:pad+660,w:190},{t:'SONRASI STOK',x:pad+850,w:230},{t:'AÇIKLAMA',x:pad+1080,w:W-pad*2-1080}];
+    x.fillStyle='#e9edf4';x.fillRect(pad,headH-28,W-pad*2,42);x.font='bold 17px Arial';x.fillStyle='#263247';cols.forEach(a=>x.fillText(a.t,a.x+10,headH));
+    items.forEach((h,i)=>{const y=headH+14+i*rowH;if(i%2===0){x.fillStyle='#f7f8fb';x.fillRect(pad,y,W-pad*2,rowH);}const label=h.type==='in'?'GİRİŞ':h.type==='out'?'ÇIKIŞ':'DÜZELTME';const amount=h.type==='in'?'+ '+num(h.qty):h.type==='out'?'− '+num(h.qty):'= '+num(h.qty);const unit=h.unit||'adet';const vals=[fmt(h.date),h.product,label,amount+' '+unit,num(h.after)+' '+unit,h.note||'—'];x.font='18px Arial';x.fillStyle='#172033';vals.forEach((v,j)=>canvasText(x,v,cols[j].x+10,y+23,cols[j].w-20,20,2));x.strokeStyle='#e2e7ef';x.beginPath();x.moveTo(pad,y+rowH);x.lineTo(W-pad,y+rowH);x.stroke();});
+    x.fillStyle='#687386';x.font='16px Arial';x.fillText('Osoza Plastik · Tarihli işlem arşivi',pad,H-24);return c;
+  }
+  const toJpegFile=async(canvas,name)=>{const blob=await new Promise(r=>canvas.toBlob(r,'image/jpeg',0.92));if(!blob)throw new Error('JPEG oluşturulamadı (görsel çok büyük olabilir).');return new File([blob],name,{type:'image/jpeg'});};
+  $('dayEndBtn').addEventListener('click',async()=>{
+    const stamp=today();
+    try{
+      toast('Raporlar hazırlanıyor...');
+      const files=[await toJpegFile(makeStockJpeg(),'osoza-mevcut-stok-'+stamp+'.jpg'),await toJpegFile(makeHistoryJpeg(),'osoza-islem-arsivi-'+stamp+'.jpg')];
+      const r=await deliver(files);
+      if(r==='download')toast('İki JPEG raporu indirildi.');
+    }catch(e){alert('JPEG raporu kaydedilemedi: '+(e.message||e));}
+  });
+
+  // PWA: kurulum ve service worker
+  let deferredPrompt=null;
+  const standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  if(!standalone){
+    if(isIOS){$('installText').textContent='Safari’de Paylaş düğmesine dokunun, ardından “Ana Ekrana Ekle” seçin.';$('installBtn').style.display='none';$('installBox').classList.add('show');}
+    window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installBox').classList.add('show');});
+  }
+  $('installBtn').addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;$('installBox').classList.remove('show');});
+  window.addEventListener('appinstalled',()=>$('installBox').classList.remove('show'));
+  if(isNative){$('printBtn').style.display='none';$('installBox').style.display='none';}
+  else if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+  if(navigator.storage&&navigator.storage.persist){navigator.storage.persist().catch(()=>{});}
+
+  $('date').value=today();load();render();
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(!$('date').value)$('date').value=today();render();}});
+})();
+</script>
+</body>
+</html>
