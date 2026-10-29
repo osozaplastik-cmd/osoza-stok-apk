@@ -39,6 +39,11 @@ jobs:
 
       - name: Web dosyalarini esitle
         run: npx cap sync android
+        
+       - name: Sabit imza anahtarini kullan
+        run: |
+          mkdir -p ~/.android
+          cp resources/debug.keystore ~/.android/debug.keystore
 
       - name: APK derle
         working-directory: android
